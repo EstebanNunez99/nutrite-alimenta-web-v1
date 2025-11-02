@@ -1,0 +1,127 @@
+/* --- Estilos del Botón usando Variables Globales --- */
+
+/* Estilos base que todos los botones compartirán */
+.btn {
+    cursor: pointer;
+    padding: 10px 20px;
+    border: 2px solid transparent;
+    border-radius: var(--borde-radio);
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: var(--fuente-principal);
+    transition: all 0.2s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Variante Primaria: el botón principal de acción */
+.primary {
+    background-color: var(--color-principal);
+    color: var(--color-superficie);
+}
+
+.primary:hover {
+    filter: brightness(90%);
+}
+
+/* Variante Secundaria: un botón menos prominente */
+.secondary {
+    background-color: transparent;
+    color: var(--color-texto-principal);
+    border-color: #ced4da; /* Un gris neutro para bordes */
+}
+
+.secondary:hover {
+    background-color: #e9ecef; /* Un fondo sutil para el hover */
+}
+
+/* Variante de Peligro: para acciones destructivas */
+.danger {
+    background-color: transparent;
+    color: var(--color-peligro);
+    border-color: var(--color-peligro);
+}
+
+.danger:hover {
+    background-color: var(--color-peligro);
+    color: var(--color-superficie);
+}
+
+/* Estilo para cuando el botón esté deshabilitado */
+.btn:disabled {
+    background-color: #ced4da;
+    border-color: #ced4da;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Estilo para el estado activo (ej. paginación) */
+.active {
+    background-color: var(--color-texto-principal);
+    color: var(--color-superficie);
+    border-color: var(--color-texto-principal);
+}
+
+/* --- Variante Link (para la navegación) --- */
+.link {
+    text-decoration: none;
+    background-color: transparent;
+    color: var(--color-texto-secundario);
+    padding: 5px 0;
+    border: none;
+    border-radius: 0;
+    font-weight: 500;
+    position: relative;
+    transition: color 0.2s ease-in-out;
+}
+
+.link:hover {
+    background-color: transparent;
+    color: var(--color-principal);
+}
+
+.link::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--color-principal);
+    transition: width 0.3s ease-in-out;
+}
+
+.link:hover::after {
+    width: 100%;
+}
+
+/* Estilo para el estado activo de la variante Link (subrayado permanente) */
+.linkActive::after {
+    width: 100%;
+}
+
+.quantity {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    color: #333;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border-radius: 50%; /* Círculo perfecto */
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.quantity:hover:not(:disabled) {
+    background-color: #e0e0e0;
+}
+
+.quantity:active:not(:disabled) {
+    transform: scale(0.95);
+}

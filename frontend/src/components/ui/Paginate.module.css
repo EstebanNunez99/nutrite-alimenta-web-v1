@@ -1,0 +1,6 @@
+.nav {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 5px; /* Pequeño espacio entre botones */
+}

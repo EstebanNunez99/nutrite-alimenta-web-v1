@@ -1,0 +1,74 @@
+/* src/components/ui/ProductCard.module.css */
+
+.card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #eee;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.imageContainer {
+    width: 100%;
+    padding-top: 100%; /* Truco para hacer un contenedor cuadrado (aspect-ratio 1:1) */
+    position: relative;
+    overflow: hidden;
+}
+
+.cardImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Asegura que la imagen cubra el espacio sin deformarse */
+    transition: transform 0.3s ease;
+}
+
+.card:hover .cardImage {
+    transform: scale(1.05);
+}
+
+.cardBody {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Para que ocupe el espacio restante */
+    text-align: center;
+}
+
+.cardTitle {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.cardTitle a {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.2s ease;
+}
+
+.cardTitle a:hover {
+    color: var(--color-principal);
+}
+
+.cardPrice {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--color-principal);
+    margin: 0 0 auto 0; /* Empuja el botón hacia abajo */
+    padding-bottom: 1rem;
+}
+
+.cardButton {
+    width: 100%;
+}

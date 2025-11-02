@@ -1,0 +1,43 @@
+/* src/components/ui/Input.module.css */
+
+/* Renombramos formGroup a inputWrapper para más claridad */
+.inputWrapper {
+    position: relative; /* Necesario para posicionar el ícono */
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.label {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.icon {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    color: #888;
+    font-size: 1.1rem;
+    /* Evita que el ícono intercepte los clics del mouse */
+    pointer-events: none; 
+}
+
+.input {
+    height: 40px;
+    padding: 12px 15px;
+    /* ...el resto de tus estilos base para el input (border, font-size, etc.)... */
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* Clase que se añade cuando hay un ícono */
+.input.withIcon {
+    padding-left: 45px;
+}

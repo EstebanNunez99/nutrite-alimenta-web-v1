@@ -1,0 +1,66 @@
+/* === ESTILOS GENERALES DEL CONTENEDOR === */
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #ffffff; /* Un fondo blanco limpio */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra más sutil */
+}
+
+/* Puedes mantener tu estilo de aviso o usar este */
+.aviso {
+    text-align: center;
+    color: #d9534f;
+    border: 2px solid #d9534f;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem; /* Espacio antes del botón de crear */
+}
+
+
+/* === ESTILOS PARA LA TABLA (AQUÍ ESTÁ LA MAGIA) === */
+.tabla {
+    width: 100%; /* Mantenemos el 100% para que sea responsive */
+    margin-top: 2rem; /* Más espacio respecto al botón de arriba */
+    border-collapse: collapse; /* Importante para que los bordes se unan */
+    border-spacing: 0;
+    font-size: 0.9rem; /* Un tamaño de fuente ligeramente más pequeño para tablas */
+}
+
+/* --- Estilos para los Títulos de las Columnas (th) --- */
+.filaTitulo {
+    border-bottom: 2px solid #333; /* Un borde inferior más grueso para el encabezado */
+}
+
+.columnaTitulo {
+    padding: 12px 15px; /* ¡AÑADIMOS PADDING! Esto es clave para la legibilidad */
+    text-align: left;
+    font-weight: 600; /* Texto en negrita para los títulos */
+    color: #333;
+    background-color: #f8f9fa; /* Un fondo muy sutil para el encabezado */
+}
+
+/* --- Estilos para las Filas de Datos (tr en tbody) --- */
+.filaItem {
+    border-bottom: 1px solid #ddd; /* Borde más suave entre filas */
+    transition: background-color 0.2s ease; /* Efecto suave al pasar el mouse */
+}
+
+/* Efecto "hover" para resaltar la fila sobre la que está el cursor */
+.filaItem:hover {
+    background-color: #f1f1f1;
+}
+
+/* --- Estilos para las Celdas de Datos (td) --- */
+.columnaItem {
+    padding: 12px 15px; /* El mismo padding que los títulos para alinear todo */
+    vertical-align: middle; /* Alinea verticalmente el contenido al centro */
+}
+
+/* --- Estilos especiales para la columna de Acciones --- */
+.columnaAcciones {
+    display: flex; /* Usamos Flexbox para alinear los botones */
+    gap: 8px; /* Crea un espacio consistente entre los botones */
+    align-items: center;
+}

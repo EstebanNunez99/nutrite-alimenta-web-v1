@@ -1,0 +1,130 @@
+/* === Contenedor Principal de la Página === */
+.profileContainer {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fdfdfd;
+    border-radius: var(--borde-radio);
+    box-shadow: var(--sombra-suave);
+}
+
+/* === Encabezado: "Mi Perfil" y botón "Cerrar Sesión" === */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--color-claro);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+.header h2 {
+    margin: 0;
+    color: var(--color-oscuro);
+}
+
+/* === Sección de Info y Foto (la primera grilla de 2 columnas) === */
+.infoSection {
+    display: grid;
+    grid-template-columns: 1fr; /* 1 columna en móvil por defecto */
+    gap: 2rem 3rem;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--color-claro);
+}
+
+/* A partir de 768px de ancho, pasamos a 2 columnas */
+@media (min-width: 768px) {
+    .infoSection {
+        grid-template-columns: 2fr 1fr; /* La info ocupa el doble que la foto */
+    }
+}
+
+/* --- Contenedor de la Info de la cuenta --- */
+.accountInfo h3, .profilePhoto h3 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: #444;
+}
+
+.infoGrid {
+    display: grid;
+    grid-template-columns: auto 1fr; /* Columna de labels y columna de valores */
+    gap: 1rem;
+    align-items: center;
+}
+
+.infoLabel {
+    font-weight: 600;
+    color: #555;
+    margin: 0;
+}
+
+.infoValue {
+    margin: 0;
+    background-color: #f4f4f4;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+}
+
+/* --- Contenedor de la Foto de Perfil --- */
+.profilePhoto {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.photoContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+.photoWrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.photo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%; /* Foto redonda */
+    object-fit: cover; /* Asegura que la imagen no se deforme */
+    border: 3px solid var(--color-claro);
+    box-shadow: var(--sombra-suave);
+    transition: transform 0.2s ease;
+}
+
+.photo:hover {
+    transform: scale(1.05);
+}
+
+.photoOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* === Contenedor de los Formularios (la segunda grilla de 2 columnas) === */
+.formsContainer {
+    display: grid;
+    grid-template-columns: 1fr; /* 1 columna en móvil por defecto */
+    gap: 2rem 3rem;
+}
+
+/* A partir de 992px, pasamos a 2 columnas para los formularios */
+@media (min-width: 992px) {
+    .formsContainer {
+        grid-template-columns: 1fr 1fr;
+    }
+}

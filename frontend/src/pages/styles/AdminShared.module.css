@@ -1,0 +1,101 @@
+/* src/pages/admin/styles/AdminShared.module.css */
+
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 1rem; /* Un poco menos de padding en móviles */
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.aviso {
+    text-align: center;
+    color: #d9534f;
+    border: 2px solid #d9534f;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem; /* Espacio antes del botón de crear */
+}
+
+@media (min-width: 768px) {
+    .container {
+        padding: 2rem; /* Volvemos al padding original en pantallas más grandes */
+    }
+}
+
+.controlsContainer {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.searchInput {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    flex-grow: 1; /* Para que ocupe el espacio disponible */
+    max-width: 400px;
+}
+
+
+.tableWrapper {
+    overflow-x: auto;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.table {
+    width: 100%;
+    /* Le damos un ancho mínimo para que en pantallas chicas se active el scroll */
+    min-width: 800px; 
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.tableHead th {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #333;
+}
+
+.tableRow {
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.2s ease;
+}
+
+.tableRow:hover {
+    background-color: #f1f1f1;
+}
+
+.tableCell {
+    padding: 12px 15px;
+    vertical-align: middle;
+    /* Evita que el texto largo se rompa en muchas líneas */
+    white-space: nowrap; 
+}
+
+.roleSelect {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.actionsCell {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* --- PAGINACIÓN --- */
+.paginationContainer {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}

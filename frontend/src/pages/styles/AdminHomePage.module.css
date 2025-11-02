@@ -1,0 +1,34 @@
+.dashboard {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.aviso {
+    text-align: center;
+    color: #d9534f;
+    border: 2px solid #d9534f;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem; /* Espacio antes del botón de crear */
+}
+.welcome {
+    margin-bottom: 2rem;
+}
+
+.navList {
+    list-style-type: none;
+    padding: 0;
+}
+
+.navItem {
+    margin: 1rem 0;
+}
+
+.navItem button {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.1rem;
+}

@@ -1,0 +1,73 @@
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.overlay.isOpen {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal {
+    border-radius: 10px;
+    position: fixed;
+    top: 10%;
+    right: 1%;
+    height:85%;
+    width: 450px; /* Ancho del panel */
+    max-width: 90%;
+    background-color: var(--color-superficie);
+    box-shadow: -4px 0 15px rgba(0,0,0,0.2);
+    transform: translateX(100%); /* Empieza fuera de la pantalla */
+    transition: transform 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal.isOpen {
+    transform: translateX(0); /* Se desliza a la vista */
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--espaciado-sm);
+    border-bottom: 1px solid #eee;
+}
+
+.modalContent {
+    flex-grow: 1;
+    overflow-y: auto; /* Permite scroll si hay muchos productos */
+    padding: var(--espaciado-sm);
+}
+
+.modalFooter {
+    padding: var(--espaciado-sm);
+    border-top: 1px solid #eee;
+}
+
+/* Reutilizamos los estilos de CartPage para los items */
+.cartItems {
+    display: flex;
+    flex-direction: column;
+}
+
+.cartItem {
+    display: flex;
+    align-items: center;
+    background-color: var(--color-superficie);
+    padding: var(--espaciado-sm);
+    border-radius: var(--borde-radio);
+    box-shadow: var(--sombra-suave);
+    margin-bottom: var(--espaciado-sm);
+}
+/* ... (puedes copiar los estilos de .cartItem, .itemImage, etc. de CartPage.module.css aquí) */

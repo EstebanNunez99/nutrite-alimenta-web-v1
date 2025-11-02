@@ -1,0 +1,78 @@
+.hero {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+    min-height: 70vh; padding: 4rem 2rem; color: white; position: relative;
+    background-image: url('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1600&q=80');
+    background-size: cover; background-position: center;
+}
+.hero::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+.heroContent {
+    position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 1.5rem;
+}
+.title {
+    font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; margin: 0;
+    text-shadow: 0 3px 6px rgba(0,0,0,0.3);
+}
+.subtitle {
+    font-size: 1.25rem; max-width: 600px; margin: 0; opacity: 0.9;
+}
+.buttonContainer {
+    display: flex; gap: 1rem; margin-top: 1rem;
+}
+
+/* --- Sección del Carrusel --- */
+.carouselSection {
+    max-width: 1400px; margin: 0 auto; padding: 4rem 2rem;
+}
+.sectionTitle {
+    text-align: center; font-size: 2.5rem; margin-top: 0; margin-bottom: 3rem; color: #333;
+}
+.carouselSection :global(.swiper-button-next),
+.carouselSection :global(.swiper-button-prev) {
+    color: var(--color-principal);
+}
+.carouselSection :global(.swiper-pagination-bullet-active) {
+    background-color: var(--color-principal);
+}
+
+/* --- Sección del Producto Spotlight --- */
+.spotlightSection {
+    background-color: var(--color-fondo); padding: 5rem 2rem;
+}
+.spotlightGrid {
+    max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr; align-items: center; gap: 3rem;
+}
+@media (min-width: 768px) {
+    .spotlightGrid { grid-template-columns: 1fr 1fr; }
+}
+.spotlightImage {
+    width: 100%; border-radius: var(--borde-radio); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+.spotlightContent {
+    text-align: center;
+}
+@media (min-width: 768px) {
+    .spotlightContent { text-align: left; }
+}
+.spotlightTag {
+    display: inline-block; padding: 0.5rem 1rem; background-color: var(--color-principal); color: white;
+    border-radius: 20px; font-size: 0.9rem; font-weight: bold; margin-bottom: 1rem; text-transform: uppercase;
+}
+.spotlightTitle {
+    font-size: 2.8rem; font-weight: 700; margin: 0 0 1rem 0;
+}
+.spotlightDescription {
+    font-size: 1.1rem; color: var(--color-texto-secundario); line-height: 1.8; margin-bottom: 2rem;
+}
+
+/* --- Ajustes responsivos que ya teníamos --- */
+@media (max-width: 480px) {
+    .title { font-size: 2.2rem; line-height: 1.2; }
+    .subtitle { font-size: 1.1rem; }
+    .buttonContainer { flex-direction: column; width: 100%; max-width: 300px; }
+    .buttonContainer a, .buttonContainer a button, .buttonContainer button { width: 100%; }
+    .carouselSection, .spotlightSection { padding: 3rem 1rem; }
+    .sectionTitle, .spotlightTitle { font-size: 2rem; }
+}

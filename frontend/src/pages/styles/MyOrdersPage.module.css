@@ -1,0 +1,86 @@
+/* MyOrdersPage.module.css */
+
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pageTitle {
+    margin-top: 0;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/* --- Wrapper para hacer la tabla responsiva --- */
+.tableWrapper {
+    overflow-x: auto; /* ¡Magia! Permite scroll horizontal en pantallas chicas */
+}
+
+/* === ESTILOS PARA LA TABLA (Idénticos a la de Admin) === */
+.table {
+    width: 100%;
+    min-width: 700px; /* Ancho mínimo para forzar el scroll y no romper el layout */
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.tableHead th {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #333;
+}
+
+.tableRow {
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.2s ease;
+}
+
+.tableRow:hover {
+    background-color: #f1f1f1;
+}
+
+.tableCell {
+    padding: 12px 15px;
+    vertical-align: middle;
+}
+
+/* --- Estilos para los Badges de Estado --- */
+.statusBadge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+.statusPaid {
+    background-color: #d4edda; /* Verde suave */
+    color: #155724; /* Verde oscuro */
+}
+
+.statusPending {
+    background-color: #fff3cd; /* Amarillo suave */
+    color: #856404; /* Amarillo oscuro */
+}
+
+/* --- Estado Vacío --- */
+.emptyState {
+    text-align: center;
+    padding: 4rem 2rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px dashed #ddd;
+}
+
+.emptyState p {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.2rem;
+    color: #555;
+}

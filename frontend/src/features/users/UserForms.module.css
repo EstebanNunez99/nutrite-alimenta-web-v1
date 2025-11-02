@@ -1,0 +1,54 @@
+/* UserForms.module.css */
+
+/* Contenedor principal para la página de perfil (la mejora) */
+.profileContainer {
+    display: grid;
+    grid-template-columns: 1fr; /* Una columna por defecto en móviles */
+    gap: 2rem 4rem; /* Espaciado vertical y horizontal */
+}
+
+/* En pantallas más grandes, pasamos a dos columnas */
+@media (min-width: 768px) {
+    .profileContainer {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Estilo para cada formulario individual */
+.form {
+    background-color: #f9f9f9;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Espacio uniforme entre cada elemento del form */
+}
+
+.form h4 {
+    margin: 0 0 0.5rem 0; /* Ajustamos el margen del título */
+    color: #333;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.5rem;
+}
+
+/* Mensajes de feedback (éxito/error) */
+.message {
+    padding: 0.75rem;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.success {
+    background-color: #e6f9f1;
+    color: #008744;
+}
+
+.error {
+    background-color: #fdecea;
+    color: #d62d20;
+}
+.fullWidth {
+    width: 100%;
+}

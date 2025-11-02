@@ -1,0 +1,81 @@
+/* AdminUserPage.module.css */
+
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.aviso {
+    text-align: center;
+    color: #d9534f;
+    border: 2px solid #d9534f;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem; /* Espacio antes del botón de crear */
+}
+/* --- Contenedor del Buscador --- */
+.controlsContainer {
+    margin-bottom: 1.5rem;
+}
+
+.searchInput {
+    /* Reutilizamos el estilo de nuestros inputs! */
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    width: 100%;
+    max-width: 400px; /* Le damos un ancho máximo */
+}
+
+/* === ESTILOS PARA LA TABLA (Idénticos a la de Productos) === */
+.table {
+    width: 100%;
+    margin-top: 1rem;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-size: 0.9rem;
+}
+
+.tableHead th {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #333;
+}
+
+.tableRow {
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.2s ease;
+}
+
+.tableRow:hover {
+    background-color: #f1f1f1;
+}
+
+.tableCell {
+    padding: 12px 15px;
+    vertical-align: middle;
+}
+
+/* --- Estilo para el selector de Rol --- */
+.roleSelect {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+/* --- Estilo para la columna de Acciones --- */
+.actionsCell {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}

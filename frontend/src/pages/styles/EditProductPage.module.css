@@ -1,0 +1,62 @@
+/* EditProductPage.module.css */
+
+.container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    margin-bottom: 2rem;
+    text-align: center;
+    color: #333;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; 
+}
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+.formLabel {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #555;
+}
+
+/* ESTA ES LA CLASE CLAVE Y ÚNICA PARA TODOS LOS CAMPOS */
+.formInput {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+.formInput:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+/* Reglas específicas para el textarea */
+textarea.formInput {
+    resize: none;
+    overflow-y: hidden;
+    line-height: 1.5;
+    height: auto;
+    min-height: 48px;
+}
+
+.formActions {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+}

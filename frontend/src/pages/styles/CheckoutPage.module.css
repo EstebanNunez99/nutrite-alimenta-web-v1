@@ -1,0 +1,125 @@
+/* CheckoutPage.module.css */
+
+.pageContainer {
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.pageContainer h2 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 2.5rem;
+    color: #333;
+}
+
+/* --- La grilla principal de 2 columnas --- */
+.checkoutGrid {
+    display: grid;
+    grid-template-columns: 1fr; /* 1 columna en móvil */
+    gap: 2rem;
+}
+
+/* A partir de 992px, pasamos a 2 columnas */
+@media (min-width: 992px) {
+    .checkoutGrid {
+        grid-template-columns: 2fr 1fr; /* El formulario es más ancho que el resumen */
+    }
+}
+
+
+/* --- Estilo de "Tarjeta" para cada sección --- */
+.shippingForm,
+.orderSummary {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e7e7e7;
+}
+
+.shippingForm h3,
+.orderSummary h3 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+}
+
+/* --- Estilos para el formulario de envío --- */
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem; /* Espacio entre los inputs */
+}
+
+/* --- Estilos para el Resumen de la Orden --- */
+.summaryItemList {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.summaryItem {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.summaryItem span:first-child {
+    margin-right: 1rem;
+}
+
+.summaryDivider {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 1.5rem 0;
+}
+
+.summaryTotal {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+/* --- Estilos para Método de Pago --- */
+.paymentMethodSection {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.selectLabel {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #333;
+    font-size: 1rem;
+}
+
+.selectInput {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+    font-family: var(--fuente-principal, inherit);
+    transition: border-color 0.2s ease-in-out;
+}
+
+.selectInput:focus {
+    outline: none;
+    border-color: var(--color-principal, #007bff);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.paymentNote {
+    font-size: 0.875rem;
+    color: #666;
+    margin-top: 0.5rem;
+    line-height: 1.4;
+}

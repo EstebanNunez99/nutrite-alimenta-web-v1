@@ -1,0 +1,51 @@
+/* Ubicación: web/src/index.css */
+
+:root {
+  /* --- Paleta de Colores --- */
+  --color-principal: #A0522D;       /* Mraron primario para acciones */
+  --color-principal-claro: #d87b50;  /* Tono más claro del marron */
+  --color-acento: #87A96B;          /* Morado para acentos o highlights */
+  --color-acento-claro: #b7da9b;     /* Cian como acento secundario */
+  --color-oscuro: #212529;
+  --color-claro: #99654d;
+  /* --color-fondo:#C47A6D; */
+  --color-fondo: #99654d;;          /*  Un fondo marron clarityo, muy limpio */
+  --color-superficie: #FFFFFF;      /* Blanco para tarjetas, headers, etc. */
+  --color-texto-principal: #212529; /* Negro suave para texto */
+  --color-texto-secundario: #5f5e5e;/* Gris para texto menos importante */
+  --color-exito: #27ae60;           /* Verde para éxito (como el precio) */
+  --color-peligro: #e74c3c;         /* Rojo para acciones de eliminar */
+
+  /* --- Tipografía --- */
+  --fuente-principal: 'Raleway', 'Roboto', sans-serif;
+
+  /* --- Espaciado --- */
+  --espaciado-xs: 0.5rem;  /* 8px */
+  --espaciado-sm: 1rem;    /* 16px */
+  --espaciado-md: 2rem;    /* 32px */
+  --espaciado-lg: 4rem;    /* 64px */
+
+  /* --- Bordes y Sombras --- */
+  --borde-radio: 8px;
+  --sombra-suave: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+  --sombra-oscura: 0 4px 8px  0 rgba(0, 0.5, 1, 0.1);
+  /* --- Tipografía --- */
+  --fuente-principal: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+
+  /* --- Espaciado --- */
+  --espaciado-sm: 1rem;
+  --espaciado-md: 2rem;
+
+
+
+}
+
+
+/* ... (el resto de tu index.css, como los estilos del body, etc.) ... */
+/* Puedes aprovechar para actualizar tu body con las nuevas variables */
+body {
+  font-family: var(--fuente-principal);
+  background-color: var(--color-fondo);
+  color: var(--color-texto-principal);
+  margin: 0;
+}
