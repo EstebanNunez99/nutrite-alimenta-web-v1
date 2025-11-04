@@ -47,7 +47,7 @@
 
 .productDescription {
     line-height: 1.8;
-    color: var(--color-texto-secundario);
+    color: var(--color-texto-terciario);
     margin-bottom: 2rem;
 }
 

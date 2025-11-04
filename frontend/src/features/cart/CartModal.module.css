@@ -8,7 +8,8 @@
     z-index: 2000;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    /* --- CAMBIO: Un poco más lento y con 'ease-out' para un final suave --- */
+    transition: opacity 0.4s ease-out, visibility 0.4s ease-out;
 }
 
 .overlay.isOpen {
@@ -26,14 +27,20 @@
     max-width: 90%;
     background-color: var(--color-superficie);
     box-shadow: -4px 0 15px rgba(0,0,0,0.2);
+
+    /* --- INICIO CAMBIO: Hacemos que también tenga 'opacity' --- */
     transform: translateX(100%); /* Empieza fuera de la pantalla */
-    transition: transform 0.3s ease-in-out;
+    opacity: 0; /* Empieza invisible */
+    transition: transform 0.4s ease-out, opacity 0.3s ease-out; /* Tiempos distintos para un efecto pro */
+    /* --- FIN CAMBIO --- */
+
     display: flex;
     flex-direction: column;
 }
 
 .modal.isOpen {
     transform: translateX(0); /* Se desliza a la vista */
+    opacity: 1; /* Se hace visible */
 }
 
 .modalHeader {
@@ -70,4 +77,43 @@
     box-shadow: var(--sombra-suave);
     margin-bottom: var(--espaciado-sm);
 }
-/* ... (puedes copiar los estilos de .cartItem, .itemImage, etc. de CartPage.module.css aquí) */
+
+.modalControl{
+    display: flex;
+    flex-direction:column;
+}
+.quantityControl {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+
+}
+
+.quantityButton {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+.quantityButton:hover {
+    background-color: #e0e0e0;
+}
+.quantityButton:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.quantityDisplay {
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+}

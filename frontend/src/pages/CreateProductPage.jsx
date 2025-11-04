@@ -15,10 +15,16 @@ const CreateProductPage = () => {
             await createProduct(productData);
             toast.success('Producto creado con éxito');
             navigate('/admin/products');
-        } catch (error) {
-            toast.error('Error al crear el producto');
+        } 
+        catch (error) {
+            if (error.response?.data?.msg === 'Ya existe un producto con este nombre.') {
+                toast.error('Ya existe un producto con este nombre');
+            } else {
+                toast.error('Error al crear el producto');
+            }
             console.error(error);
         }
+
     };
 
     return (

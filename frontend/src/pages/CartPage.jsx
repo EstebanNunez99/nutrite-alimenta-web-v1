@@ -111,8 +111,8 @@ const CartPage = () => {
             <span>Total</span>
             <span>{formattedTotal}</span>
           </div>
-          <Link to="/checkout" style={{ textDecoration: "none" }}>
-            <Button variant="primary" className={styles.checkoutButton}>
+          <Link to="/checkout">
+            <Button variant="primary">
               Proceder al Pago
             </Button>
           </Link>

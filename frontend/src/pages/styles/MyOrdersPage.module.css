@@ -69,7 +69,10 @@
     background-color: #fff3cd; /* Amarillo suave */
     color: #856404; /* Amarillo oscuro */
 }
-
+.statusCancelled {
+    background-color: #f8d7da; /* Rojo suave */
+    color: #721c24; /* Rojo oscuro */
+}
 /* --- Estado Vacío --- */
 .emptyState {
     text-align: center;

@@ -6,8 +6,10 @@ import api from '../api/axios';
 /**
  * Obtiene las órdenes del usuario logueado.
  */
-export const getMyOrders = async () => {
-    const res = await api.get('/orders/myorders');
+export const getMyOrders = async (page = 1) => {
+    // Enviamos el número de página como un query parameter
+    const res = await api.get(`/orders/myorders?page=${page}`);
+    // El backend ahora devolverá { orders, page, totalPages }
     return res.data;
 };
 

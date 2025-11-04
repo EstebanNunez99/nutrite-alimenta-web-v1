@@ -1,12 +1,12 @@
 .hero {
     display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
     min-height: 70vh; padding: 4rem 2rem; color: white; position: relative;
-    background-image: url('https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=1600&q=80');
+    background-image: url('https://res.cloudinary.com/drk7ixxdm/image/upload/v1762111245/fondoHomeGenerico_nz907g.png');
     background-size: cover; background-position: center;
 }
 .hero::before {
     content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.2);
 }
 .heroContent {
     position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 1.5rem;

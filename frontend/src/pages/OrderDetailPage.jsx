@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { getOrderById, payOrder } from '../services/orderService';
+// --- CAMBIO: Importamos la función de MP y sacamos la de pago simulado ---
+import { getOrderById, createMercadoPagoPreference } from '../services/orderService'; 
 import { useAuth } from '../hooks/useAuth';
 import { toast } from 'react-toastify';
 import Spinner from '../components/ui/Spinner';
 import Button from '../components/ui/Button';
 import useDocumentTitle from '../hooks/useDocumentTitle'
-
 
 const OrderDetailPage = () => {
     useDocumentTitle('Detalle del pedido')
@@ -16,6 +16,8 @@ const OrderDetailPage = () => {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    // --- CAMBIO: Estado para deshabilitar el botón de pago ---
+    const [isPaying, setIsPaying] = useState(false);
 
     useEffect(() => {
         const fetchOrder = async () => {
@@ -33,27 +35,43 @@ const OrderDetailPage = () => {
         fetchOrder();
     }, [orderId]);
 
+    // --- CAMBIO: Lógica de pago real de MercadoPago ---
     const handlePayment = async () => {
+        setIsPaying(true);
+        toast.info('Redirigiendo a MercadoPago...');
         try {
-            const updatedOrder = await payOrder(orderId);
-            setOrder(updatedOrder); // Actualizamos el estado local para que la UI reaccione
-            toast.success('¡Pago realizado con éxito!');
+            // 1. Llamamos a nuestro servicio para crear la preferencia
+            const preference = await createMercadoPagoPreference(orderId);
+            
+            // 2. Si todo sale bien, MP nos da el init_point (la URL de pago)
+            if (preference.init_point) {
+                // 3. Redirigimos al usuario a esa URL
+                window.location.href = preference.init_point;
+            } else {
+                throw new Error('No se pudo obtener la URL de pago.');
+            }
         } catch (err) {
-            toast.error('Hubo un error al procesar el pago.');
-            console.error("Error en el pago:", err);
+            toast.error('Hubo un error al generar el link de pago.');
+            console.error("Error al crear preferencia de MP:", err);
+            setIsPaying(false);
         }
+        // No ponemos finally, porque si la redirección es exitosa, 
+        // el usuario se va de la página.
     };
 
     if (loading) return <Spinner />;
     if (error) return <h2>{error}</h2>;
 
-    // Solo para asegurarnos que la orden cargó antes de intentar acceder a sus propiedades
     if (!order) return <h2>Orden no encontrada.</h2>;
 
     const formattedTotal = new Intl.NumberFormat("es-AR", {
         style: "currency",
         currency: "ARS",
     }).format(order.totalPrice);
+
+    // --- CAMBIO: Usamos 'items' en lugar de 'orderItems' para coincidir con el modelo ---
+    // (Asegúrate de que tu modelo 'Order' en el backend use 'items', como lo definimos)
+    const itemsToShow = order.items || order.orderItems || []; 
 
     return (
         <div style={{ maxWidth: '800px', margin: '2rem auto', padding: '2rem', backgroundColor: '#fff', borderRadius: '8px', boxShadow: 'var(--sombra-suave)' }}>
@@ -70,10 +88,10 @@ const OrderDetailPage = () => {
             
             <h4 style={{ marginTop: '2rem', marginBottom: '1rem' }}>Resumen del Pedido</h4>
             <div style={{ marginBottom: '1.5rem' }}>
-                {order.orderItems && order.orderItems.length > 0 ? (
-                    order.orderItems.map((item, index) => (
+                {itemsToShow.length > 0 ? (
+                    itemsToShow.map((item, index) => (
                         <div 
-                            key={index} 
+                            key={item._id || index} // Usar item._id si existe
                             style={{ 
                                 display: 'flex', 
                                 alignItems: 'center', 
@@ -120,10 +138,12 @@ const OrderDetailPage = () => {
                 </p>
             </div>
             
-            {/* --- SECCIÓN DE PAGO DINÁMICA --- */}
+            {/* --- CAMBIO: SECCIÓN DE PAGO CON LÓGICA DE 'status' --- */}
             <div style={{ marginTop: '2rem', padding: '1.5rem', border: '1px solid #eee', borderRadius: '8px', backgroundColor: '#f9f9f9' }}>
-                <h4 style={{ marginTop: 0 }}>Estado del Pago</h4>
-                {order.isPaid ? (
+                <h4 style={{ marginTop: 0 }}>Estado del Pedido</h4>
+                
+                {/* ESTADO 1: COMPLETADA (Pagada) */}
+                {order.status === 'completada' ? (
                     <div>
                         <p style={{ color: 'var(--color-exito, #28a745)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
                             ✓ Pagado el {new Date(order.paidAt).toLocaleDateString('es-AR', { 
@@ -134,7 +154,8 @@ const OrderDetailPage = () => {
                                 minute: '2-digit'
                             })}
                         </p>
-                        {order.isDelivered ? (
+                        {/* Mantenemos tu lógica de envío */}
+                        {order.deliveryStatus === 'entregado' ? (
                             <p style={{ color: 'var(--color-exito, #28a745)', marginTop: '0.5rem' }}>
                                 ✓ Entregado el {order.deliveredAt ? new Date(order.deliveredAt).toLocaleDateString('es-AR') : 'N/A'}
                             </p>
@@ -144,15 +165,33 @@ const OrderDetailPage = () => {
                             </p>
                         )}
                     </div>
-                ) : (
+
+                // ESTADO 2: CANCELADA (Expirada)
+                ) : order.status === 'cancelada' ? (
                     <div>
                         <p style={{ color: 'var(--color-peligro, #dc3545)', fontWeight: 'bold', marginBottom: '1rem' }}>
+                            ❌ Orden Cancelada
+                        </p>
+                        <p style={{ color: '#666' }}>
+                            Esta orden expiró porque no se completó el pago a tiempo. 
+                            El stock ha sido devuelto. Por favor, realiza un nuevo pedido.
+                        </p>
+                    </div>
+
+                // ESTADO 3: PENDIENTE (Lista para pagar)
+                ) : ( 
+                    <div>
+                        <p style={{ color: 'var(--color-advertencia, #ffc107)', fontWeight: 'bold', marginBottom: '1rem' }}>
                             ⚠ Pendiente de Pago
                         </p>
                         {/* El botón de pago solo lo ve el dueño de la orden */}
                         {usuario && (usuario._id === order.usuario?._id || usuario._id === order.usuario?.toString()) && (
-                            <Button onClick={handlePayment} variant="primary">
-                                Pagar Ahora (Simulado)
+                            <Button 
+                                onClick={handlePayment} 
+                                variant="primary"
+                                disabled={isPaying} // Deshabilitamos mientras carga
+                            >
+                                {isPaying ? 'Generando...' : 'Pagar con MercadoPago'}
                             </Button>
                         )}
                     </div>

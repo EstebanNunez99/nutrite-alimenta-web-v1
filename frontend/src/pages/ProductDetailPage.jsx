@@ -1,84 +1,3 @@
-// import React, { useState, useEffect } from 'react';
-// import { getAllProducts } from '../services/productService';
-// import ProductCard from '../features/products/ProductCard';
-
-// const containerStyles = {
-//     display: 'flex',
-//     flexWrap: 'wrap',
-//     justifyContent: 'center',
-// };
-
-// const ProductsPage = () => {
-//     const [products, setProducts] = useState([]);
-//     const [loading, setLoading] = useState(true);
-//     const [error, setError] = useState('');
-
-//     useEffect(() => {
-//         const fetchProducts = async () => {
-//             try {
-//                 const data = await getAllProducts();
-//                 setProducts(data);
-//             } catch (err) {
-//                 setError('No se pudieron cargar los productos.', err.status);
-//             } finally {
-//                 setLoading(false);
-//             }
-//         };
-//         fetchProducts();
-//     }, []);
-
-//     if (loading) return <div>Cargando productos...</div>;
-//     if (error) return <div>{error}</div>;
-
-//     return (
-//         <div>
-//             <h2>Nuestro Catálogo</h2>
-//             <div style={containerStyles}>
-//                 {products.length > 0 ? (
-//                     products.map(product => (
-//                         <ProductCard key={product._id} product={product} />
-//                     ))
-//                 ) : (
-//                     <p>No hay productos disponibles en este momento.</p>
-//                 )}
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default ProductsPage;
-// Ubicación: web/src/pages/ProductDetailPage.jsx (VERSIÓN DE DIAGNÓSTICO)
-
-//----------------Este codigo de arriba no anda por que maneja mal el fetch--------------
-
-//---------------Este codigo que sigue se hizo para aislar los componentes y probar uno por uno----------
-// import React from 'react';
-// import { useParams, Link } from 'react-router-dom';
-
-// const ProductDetailPage = () => {
-//     // useParams debería darnos el ID de la URL
-//     const { id } = useParams();
-
-//     // No hacemos llamadas a la API. Solo mostramos el ID para confirmar que la ruta funciona.
-//     return (
-//         <div style={{ padding: '20px', backgroundColor: 'lightgreen' }}>
-//             <h1>Página de Detalle de Producto (Modo de Prueba)</h1>
-//             <p style={{ fontSize: '24px', color: 'red', fontWeight: 'bold' }}>
-//                 El ID del producto es: {id}
-//             </p>
-//             <p>Si ves esto, la ruta está funcionando correctamente. El problema estaba en la llamada a la API o en el manejo de datos.</p>
-//             <Link to="/productos">
-//                 <button>Volver al Catálogo</button>
-//             </Link>
-//         </div>
-//     );
-// };
-
-// export default ProductDetailPage;
-
-//------------ESte es el codigo final-------------
-// RUTA: src/pages/ProductDetailPage.jsx
-
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getProductById } from '../services/productService';
@@ -86,7 +5,7 @@ import { useCart } from '../hooks/useCart';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import Spinner from '../components/ui/Spinner';
 import Button from '../components/ui/Button';
-import styles from './styles/ProductDetailPage.module.css'; // <-- Necesitaremos un nuevo archivo de estilos
+import styles from './styles/ProductDetailPage.module.css'; 
 
 const ProductDetailPage = () => {
     const { id } = useParams();
@@ -95,6 +14,7 @@ const ProductDetailPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [quantity, setQuantity] = useState(1);
+    const [stockEngaged, setStockEngaged] = useState(1)
 
     // Título dinámico del documento
     useDocumentTitle(product ? product.nombre : 'Cargando producto...');
@@ -119,6 +39,10 @@ const ProductDetailPage = () => {
         addItem(product._id, quantity);
     };
 
+    const handleStockEngaged = ()=>{
+        
+    }
+
     if (loading) return <Spinner />;
     if (error) return <div className={styles.error}>{error}</div>;
     if (!product) return <div className={styles.error}>Producto no encontrado.</div>;
@@ -135,7 +59,8 @@ const ProductDetailPage = () => {
                     <p className={styles.productDescription}>{product.descripcion}</p>
 
                     <div className={styles.stockInfo}>
-                        Estado: <span>{product.stock > 0 ? 'En Stock' : 'Agotado'}</span>
+                        Disponible: <span>{product.stock}</span>
+                        
                     </div>
 
                     {product.stock > 0 && (

@@ -6,7 +6,8 @@ const orderSchema = new mongoose.Schema({
         required: true,
         ref: 'User'
     },
-    orderItems: [
+    // 1. Renombrado para coherencia con 'Cart'
+    items: [ 
         {
             nombre: { type: String, required: true },
             cantidad: { type: Number, required: true },
@@ -28,29 +29,59 @@ const orderSchema = new mongoose.Schema({
     paymentMethod: {
         type: String,
         required: true,
-        default: 'PayPal' // Podemos poner un valor por defecto
+        default: 'MercadoPago' // Actualizado a tu elección
     },
     totalPrice: {
         type: Number,
         required: true,
         default: 0.0
     },
-    isPaid: {
-        type: Boolean,
+
+    // --- INICIO DE CAMBIOS ---
+
+    // 2. 'isPaid' se reemplaza por 'status' para más control
+    status: {
+        type: String,
         required: true,
-        default: false
+        enum: ['pendiente', 'completada', 'cancelada'], // Estados clave del flujo
+        default: 'pendiente'
     },
-    paidAt: {
+
+    // 3. 'paymentResult' guarda la info de la pasarela (MercadoPago)
+    paymentResult: {
+        id: { type: String },
+        status: { type: String }, // ej: "approved", "rejected"
+        update_time: { type: String },
+        email_address: { type: String }
+    },
+
+    paidAt: { // Lo mantenemos, se actualiza cuando status es 'completada'
         type: Date
     },
-    isDelivered: {
-        type: Boolean,
+
+    // 4. 'isDelivered' se puede manejar con un status de envío
+    deliveryStatus: {
+        type: String,
         required: true,
-        default: false
+        enum: ['no_enviado', 'enviado', 'entregado'],
+        default: 'no_enviado'
     },
-    deliveredAt: {
+
+    deliveredAt: { // Lo mantenemos
         type: Date
+    },
+
+    // 5. Campo CRÍTICO para la "Tarea Programada" (Camino B)
+    expiresAt: {
+        type: Date,
+        // Seteamos una expiración (ej. 15 minutos) al crear la orden
+        default: () => new Date(Date.now() + 20 * 60 * 1000),
+        // Creamos un índice para que la BD busque rápido las órdenes expiradas
+        index: true 
     }
+    
+    // --- FIN DE CAMBIOS ---
+
 }, {
     timestamps: true
 });

@@ -39,7 +39,8 @@ const openCart = () => setIsCartOpen(true);
         try {
             const updatedCart = await addItemToCart(productId, quantity);
             setCart(updatedCart);
-            toast.success("Producto añadido al carrito!");
+            // toast.success("Producto añadido al carrito!");
+            openCart();
         } catch (error) {
             toast.error("No se pudo añadir el producto.", error.status);
         }

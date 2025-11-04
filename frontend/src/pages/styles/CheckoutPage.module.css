@@ -26,7 +26,14 @@
         grid-template-columns: 2fr 1fr; /* El formulario es más ancho que el resumen */
     }
 }
-
+.aviso {
+    text-align: center;
+    color: #d9534f;
+    border: 2px solid #d9534f;
+    padding: 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem; /* Espacio antes del botón de crear */
+}
 
 /* --- Estilo de "Tarjeta" para cada sección --- */
 .shippingForm,

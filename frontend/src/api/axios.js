@@ -12,10 +12,6 @@ if (import.meta.env.VITE_API_URL) {
     baseURL = 'http://localhost:4000/api';
 }
 
-// Log para debugging (solo en desarrollo)
-if (import.meta.env.DEV) {
-    console.log('🔗 API Base URL:', baseURL);
-}
 
 const api = axios.create({
     baseURL: baseURL,

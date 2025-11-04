@@ -2,7 +2,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styles from "./Footer.module.css";
-import { FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
+import { FaFacebook, FaInstagram, FaTwitter, FaTelegram, FaWhatsapp } from "react-icons/fa";
+import { MdOutlineMail } from "react-icons/md";
 
 const Footer = () => {
   return (
@@ -11,7 +12,7 @@ const Footer = () => {
         <div className={styles.footerSection}>
           <h4 className={styles.footerTitle}>Sobre Mi Tienda</h4>
           <p className={styles.footerText}>
-            La mejor tienda online para encontrar todo lo que necesitás. Calidad y buen precio en un solo lugar.
+            La mejor tienda online para encontrar todo lo que necesitás.Por ahora en modo desarroll.
           </p>
         </div>
 
@@ -25,16 +26,30 @@ const Footer = () => {
         </div>
 
         <div className={styles.footerSection}>
-          <h4 className={styles.footerTitle}>Seguinos</h4>
+          <h4 className={styles.footerTitle}>Mis Redes</h4>
           <div className={styles.socialIcons}>
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <a href="https://www.facebook.com/esteban.ignacio.1460/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
               <FaFacebook />
             </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <a href="https://www.instagram.com/esteban_nnunez/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
               <FaInstagram />
             </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+            <a href="https://x.com/Estebannunex" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
               <FaTwitter />
+            </a>
+          </div>
+        </div>
+        <div className={styles.footerSection}>
+          <h4 className={styles.footerTitle}>Contactáme</h4>
+          <div className={styles.socialIcons}>
+            <a href="mailto:nunezesteban750@gmail.com?subject=Consulta desde tu tienda online" aria-label="Enviar un correo electrónico">
+              <MdOutlineMail />
+            </a>
+            <a href="https://wa.me/qr/UNO32CGW2ZE6D1" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+              <FaWhatsapp />
+            </a>
+            <a href="https://t.me/+543781408870" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+              <FaTelegram />
             </a>
           </div>
         </div>

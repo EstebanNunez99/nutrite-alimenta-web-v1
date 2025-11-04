@@ -4,7 +4,7 @@ import { useCart } from '../hooks/useCart.js';
 import { toast } from 'react-toastify';
 import Button from '../components/ui/Button.jsx';
 import Input from '../components/ui/Input';
-import Spinner from '../components/ui/Spinner'; // Importamos el Spinner
+import Spinner from '../components/ui/Spinner';
 import styles from './styles/CheckoutPage.module.css';
 import useDocumentTitle from '../hooks/useDocumentTitle'
 
@@ -123,6 +123,7 @@ const CheckoutPage = () => {
                             required 
                             placeholder="País"
                         />
+                        <p className={styles.aviso}>Aclaración: aún no está conectada a la API de google maps, por lo que no se realiza el calculo de costo de envio automático</p>
                         
                         <div className={styles.paymentMethodSection}>
                             <label htmlFor="paymentMethod" className={styles.selectLabel}>

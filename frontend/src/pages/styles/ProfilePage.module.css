@@ -115,6 +115,16 @@
     justify-content: center;
 }
 
+.actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--color-claro);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+
 /* === Contenedor de los Formularios (la segunda grilla de 2 columnas) === */
 .formsContainer {
     display: grid;

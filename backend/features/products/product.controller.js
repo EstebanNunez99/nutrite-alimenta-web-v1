@@ -3,12 +3,19 @@ import Product from './product.model.js';
 // @desc    Crear un nuevo producto
 // @route   POST /api/products
 // @access  Private/Admin
+// @desc    Crear un nuevo producto
+// @route   POST /api/products
+// @access  Private/Admin
 export const createProduct = async (req, res) => {
     try {
         const { nombre, descripcion, precio, stock, categoria, imagen } = req.body;
-        
-        // El ID del admin viene de nuestro authMiddleware
         const vendedor = req.usuario.id;
+
+        // Verificamos si ya existe un producto con ese nombre
+        const productoExistente = await Product.findOne({ nombre });
+        if (productoExistente) {
+            return res.status(400).json({ msg: 'Ya existe un producto con este nombre.' });
+        }
 
         const product = new Product({
             nombre,

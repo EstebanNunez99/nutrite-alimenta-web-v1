@@ -10,9 +10,10 @@
   --color-claro: #99654d;
   /* --color-fondo:#C47A6D; */
   --color-fondo: #99654d;;          /*  Un fondo marron clarityo, muy limpio */
-  --color-superficie: #FFFFFF;      /* Blanco para tarjetas, headers, etc. */
+  --color-superficie: #e9e9e9;      /* Blanco para tarjetas, headers, etc. */
   --color-texto-principal: #212529; /* Negro suave para texto */
   --color-texto-secundario: #5f5e5e;/* Gris para texto menos importante */
+  --color-texto-terciario: #ece2e2;
   --color-exito: #27ae60;           /* Verde para éxito (como el precio) */
   --color-peligro: #e74c3c;         /* Rojo para acciones de eliminar */
 
