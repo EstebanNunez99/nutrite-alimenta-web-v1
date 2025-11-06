@@ -91,20 +91,16 @@ export const createOrder = async (req, res) => {
 // @access  Private
 export const getMyOrders = async (req, res) => {
     try {
-        const pageSize = 10; // Definimos 10 órdenes por página
+        const pageSize = 10; 
         const page = Number(req.query.page) || Number(req.query.pageNumber) || 1;
         
-
-        // 1. Contamos el total de documentos
         const count = await Order.countDocuments({ usuario: req.usuario.id });
 
-        // 2. Buscamos solo las órdenes de esa página
         const orders = await Order.find({ usuario: req.usuario.id })
-            .sort({ createdAt: -1 }) // Ordenamos por más nuevo
-            .limit(pageSize) // Aplicamos el límite
-            .skip(pageSize * (page - 1)); // Saltamos las órdenes de páginas anteriores
+            .sort({ createdAt: -1 }) 
+            .limit(pageSize) 
+            .skip(pageSize * (page - 1)); 
 
-        // 3. Devolvemos un objeto con las órdenes y la info de paginación
         res.json({ 
             orders, 
             page, 
@@ -116,6 +112,7 @@ export const getMyOrders = async (req, res) => {
         res.status(500).json({ msg: 'Error en el servidor' });
     }
 };
+
 // @desc    Obtener una orden por su ID
 // @route   GET /api/orders/:id
 // @access  Private
@@ -188,8 +185,6 @@ export const createMercadoPagoPreference = async (req, res) => {
         const { id: orderId } = req.params;
         const usuarioId = req.usuario.id;
 
-        // --- BLOQUE DE DEBUG ELIMINADO ---
-
         if (!process.env.MERCADOPAGO_ACCESS_TOKEN) {
             console.error('ERROR: MERCADOPAGO_ACCESS_TOKEN no está definido en .env');
             return res.status(500).json({ msg: 'Error de configuración del servidor (MP Token).' });
@@ -240,7 +235,7 @@ export const createMercadoPagoPreference = async (req, res) => {
                 failure: `${frontendURL}/orden/${orderId}`, 
                 pending: `${frontendURL}/orden/${orderId}`  
             },
-            // auto_return: 'approved',
+            // auto_return: 'approved', // Lo dejamos comentado, causaba conflicto
             external_reference: orderId, 
             notification_url: `${backendURL}/api/orders/webhook/mercadopago` 
         };
@@ -274,7 +269,7 @@ export const createMercadoPagoPreference = async (req, res) => {
 // @access  Público
 export const receiveMercadoPagoWebhook = async (req, res) => {
     console.log('[MP Webhook] Notificación recibida.');
-    console.log('Body:', JSON.stringify(req.body, null, 2)); // Dejamos este log por seguridad
+    console.log('Body:', JSON.stringify(req.body, null, 2));
     
     try {
         const client = new MercadoPagoConfig({ 
@@ -284,7 +279,6 @@ export const receiveMercadoPagoWebhook = async (req, res) => {
         let paymentDetails = null;
         let paymentId = null;
 
-        // CASO A: Notificación de "Payment"
         if (req.body.type === 'payment') {
             paymentId = req.body.data.id;
             console.log(`[MP Webhook] Recibido 'type: payment' con ID: ${paymentId}`);
@@ -292,7 +286,6 @@ export const receiveMercadoPagoWebhook = async (req, res) => {
             const payment = new Payment(client);
             paymentDetails = await payment.get({ id: paymentId });
         
-        // CASO B: Notificación de "Merchant Order"
         } else if (req.body.topic === 'merchant_order') {
             const merchantOrderId = req.body.resource.split('/').pop();
             console.log(`[MP Webhook] Recibido 'topic: merchant_order' con ID: ${merchantOrderId}`);
@@ -312,13 +305,11 @@ export const receiveMercadoPagoWebhook = async (req, res) => {
                 console.log(`[MP Webhook] MerchantOrder ${merchantOrderId} no contenía pagos.`);
             }
         
-        // CASO C: Notificación desconocida
         } else {
             console.log(`[MP Webhook] Evento ignorado: tipo '${req.body.type}' y tópico '${req.body.topic}' desconocidos.`);
             return res.status(200).send('Evento no reconocido.');
         }
 
-        // --- LÓGICA UNIFICADA ---
         if (!paymentDetails) {
             console.log('[MP Webhook] No se pudieron obtener detalles del pago.');
             return res.status(200).send('Sin detalles de pago para procesar.');
@@ -401,3 +392,80 @@ export const receiveMercadoPagoWebhook = async (req, res) => {
         res.status(500).json({ msg: 'Error en el servidor al procesar webhook', error: error.message });
     }
 };
+
+
+// @desc    Disparador manual para limpiar órdenes expiradas (para Cron Job)
+// @route   GET /api/orders/trigger-cron
+// @access  Público
+export const triggerOrderCleanup = async (req, res) => {
+    // --- (Opcional) Seguridad para el Cron Job ---
+    // Para evitar que cualquiera llame a esta URL, podemos
+    // agregar un "secret" que solo Render y nosotros sabemos.
+    const cronSecret = req.headers['x-cron-secret'];
+    if (cronSecret !== process.env.CRON_SECRET) {
+        console.warn('[CRON] Intento de ejecución de Cron Job SIN secreto.');
+        return res.status(401).json({ msg: 'No autorizado.' });
+    }
+    // ---------------------------------------------
+    
+    console.log('[CRON-ENDPOINT] Ejecutando tarea: Buscando órdenes pendientes expiradas...');
+    const now = new Date();
+    let ordersCancelledCount = 0;
+
+    try {
+        const expiredOrders = await Order.find({
+            status: 'pendiente',
+            expiresAt: { $lte: now } 
+        });
+
+        if (expiredOrders.length === 0) {
+            console.log('[CRON-ENDPOINT] No se encontraron órdenes expiradas.');
+            return res.status(200).json({ msg: 'No se encontraron órdenes expiradas.' });
+        }
+
+        console.log(`[CRON-ENDPOINT] Se encontraron ${expiredOrders.length} órdenes expiradas para cancelar.`);
+
+        for (const order of expiredOrders) {
+            const session = await mongoose.startSession();
+            session.startTransaction();
+
+            try {
+                order.status = 'cancelada';
+                await order.save({ session });
+
+                const productsToUpdate = order.items.map(item => ({
+                    updateOne: {
+                        filter: { _id: item.producto },
+                        update: {
+                            $inc: {
+                                stock: item.cantidad,
+                                stockComprometido: -item.cantidad 
+                            }
+                        }
+                    }
+                }));
+
+                await Product.bulkWrite(productsToUpdate, { session });
+                await session.commitTransaction();
+                console.log(`[CRON-ENDPOINT] Orden ${order._id} cancelada y stock devuelto.`);
+                ordersCancelledCount++;
+
+            } catch (error) {
+                await session.abortTransaction();
+                console.error(`[CRON-ENDPOINT] Error al procesar orden ${order._id}:`, error.message);
+            } finally {
+                session.endSession();
+            }
+        }
+
+        res.status(200).json({ 
+            msg: 'Tarea de limpieza de órdenes completada.',
+            cancelled: ordersCancelledCount
+        });
+
+    } catch (error) {
+        console.error('[CRON-ENDPOINT] Error general al ejecutar la limpieza:', error);
+        res.status(500).json({ msg: 'Error en el servidor durante la limpieza de órdenes.' });
+    }
+};
+// --- FIN CAMBIO ---
