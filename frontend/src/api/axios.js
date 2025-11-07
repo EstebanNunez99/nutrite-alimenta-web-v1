@@ -1,17 +1,18 @@
 import axios from 'axios';
 
-// En desarrollo, usa el proxy de Vite. En producción, usa la variable de entorno.
-let baseURL;
-if (import.meta.env.VITE_API_URL) {
-    baseURL = import.meta.env.VITE_API_URL;
-} else if (import.meta.env.DEV) {
-    // En desarrollo, usar el proxy de Vite que redirige /api a localhost:4000
-    baseURL = '/api';
-} else {
-    // En producción, fallback a localhost (cambiar según tu configuración)
-    baseURL = 'http://localhost:4000/api';
-}
+// --- INICIO DEL CAMBIO ---
+// Esta es la forma estándar de Vite.
+// Lee VITE_API_URL del archivo .env correspondiente.
+const baseURL = import.meta.env.VITE_API_URL;
 
+// Damos un error si la variable no está definida al arrancar
+if (!baseURL) {
+    console.error(
+        "Error: VITE_API_URL no está definida.",
+        "Asegúrate de tener un .env.development (local) o variables de entorno (producción)."
+    );
+}
+// --- FIN DEL CAMBIO ---
 
 const api = axios.create({
     baseURL: baseURL,

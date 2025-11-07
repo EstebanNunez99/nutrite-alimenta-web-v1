@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 // --- CAMBIO: Importamos la función de MP y sacamos la de pago simulado ---
-import { getOrderById, createMercadoPagoPreference } from '../services/orderService'; 
+import { getOrderById, createMercadoPagoPreference } from '../services/orderService';
 import { useAuth } from '../hooks/useAuth';
 import { toast } from 'react-toastify';
 import Spinner from '../components/ui/Spinner';
@@ -42,7 +42,7 @@ const OrderDetailPage = () => {
         try {
             // 1. Llamamos a nuestro servicio para crear la preferencia
             const preference = await createMercadoPagoPreference(orderId);
-            
+
             // 2. Si todo sale bien, MP nos da el init_point (la URL de pago)
             if (preference.init_point) {
                 // 3. Redirigimos al usuario a esa URL
@@ -71,38 +71,38 @@ const OrderDetailPage = () => {
 
     // --- CAMBIO: Usamos 'items' en lugar de 'orderItems' para coincidir con el modelo ---
     // (Asegúrate de que tu modelo 'Order' en el backend use 'items', como lo definimos)
-    const itemsToShow = order.items || order.orderItems || []; 
+    const itemsToShow = order.items || order.orderItems || [];
 
     return (
         <div style={{ maxWidth: '800px', margin: '2rem auto', padding: '2rem', backgroundColor: '#fff', borderRadius: '8px', boxShadow: 'var(--sombra-suave)' }}>
             <h2>Detalle de la Orden #{order._id.substring(0, 10)}...</h2>
             <p style={{ color: '#666', marginBottom: '1.5rem' }}>
-                Fecha: {new Date(order.createdAt).toLocaleDateString('es-AR', { 
-                    year: 'numeric', 
-                    month: 'long', 
+                Fecha: {new Date(order.createdAt).toLocaleDateString('es-AR', {
+                    year: 'numeric',
+                    month: 'long',
                     day: 'numeric',
                     hour: '2-digit',
                     minute: '2-digit'
                 })}
             </p>
-            
+
             <h4 style={{ marginTop: '2rem', marginBottom: '1rem' }}>Resumen del Pedido</h4>
             <div style={{ marginBottom: '1.5rem' }}>
                 {itemsToShow.length > 0 ? (
                     itemsToShow.map((item, index) => (
-                        <div 
+                        <div
                             key={item._id || index} // Usar item._id si existe
-                            style={{ 
-                                display: 'flex', 
-                                alignItems: 'center', 
-                                padding: '1rem', 
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                padding: '1rem',
                                 borderBottom: '1px solid #eee',
                                 gap: '1rem'
                             }}
                         >
-                            <img 
-                                src={item.imagen || 'https://via.placeholder.com/80'} 
-                                alt={item.nombre} 
+                            <img
+                                src={item.imagen || 'https://via.placeholder.com/80'}
+                                alt={item.nombre}
                                 style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px' }}
                             />
                             <div style={{ flex: 1 }}>
@@ -137,23 +137,28 @@ const OrderDetailPage = () => {
                     Método de pago: {order.paymentMethod || 'No especificado'}
                 </p>
             </div>
-            
+
             {/* --- CAMBIO: SECCIÓN DE PAGO CON LÓGICA DE 'status' --- */}
             <div style={{ marginTop: '2rem', padding: '1.5rem', border: '1px solid #eee', borderRadius: '8px', backgroundColor: '#f9f9f9' }}>
                 <h4 style={{ marginTop: 0 }}>Estado del Pedido</h4>
-                
+
                 {/* ESTADO 1: COMPLETADA (Pagada) */}
                 {order.status === 'completada' ? (
                     <div>
                         <p style={{ color: 'var(--color-exito, #28a745)', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-                            ✓ Pagado el {new Date(order.paidAt).toLocaleDateString('es-AR', { 
-                                year: 'numeric', 
-                                month: 'long', 
+                            ✓ Pagado el {new Date(order.paidAt).toLocaleDateString('es-AR', {
+                                year: 'numeric',
+                                month: 'long',
                                 day: 'numeric',
                                 hour: '2-digit',
                                 minute: '2-digit'
                             })}
                         </p>
+                        {order.paymentResult && order.paymentResult.id && (
+                            <p style={{ color: '#666', fontSize: '0.9rem', margin: '0.5rem 0', fontWeight: 'normal' }}>
+                                Comprobante N° : {order.paymentResult.id}
+                            </p>
+                        )}
                         {/* Mantenemos tu lógica de envío */}
                         {order.deliveryStatus === 'entregado' ? (
                             <p style={{ color: 'var(--color-exito, #28a745)', marginTop: '0.5rem' }}>
@@ -166,28 +171,28 @@ const OrderDetailPage = () => {
                         )}
                     </div>
 
-                // ESTADO 2: CANCELADA (Expirada)
+                    // ESTADO 2: CANCELADA (Expirada)
                 ) : order.status === 'cancelada' ? (
                     <div>
                         <p style={{ color: 'var(--color-peligro, #dc3545)', fontWeight: 'bold', marginBottom: '1rem' }}>
                             ❌ Orden Cancelada
                         </p>
                         <p style={{ color: '#666' }}>
-                            Esta orden expiró porque no se completó el pago a tiempo. 
+                            Esta orden expiró porque no se completó el pago a tiempo.
                             El stock ha sido devuelto. Por favor, realiza un nuevo pedido.
                         </p>
                     </div>
 
-                // ESTADO 3: PENDIENTE (Lista para pagar)
-                ) : ( 
+                    // ESTADO 3: PENDIENTE (Lista para pagar)
+                ) : (
                     <div>
                         <p style={{ color: 'var(--color-advertencia, #ffc107)', fontWeight: 'bold', marginBottom: '1rem' }}>
                             ⚠ Pendiente de Pago
                         </p>
                         {/* El botón de pago solo lo ve el dueño de la orden */}
                         {usuario && (usuario._id === order.usuario?._id || usuario._id === order.usuario?.toString()) && (
-                            <Button 
-                                onClick={handlePayment} 
+                            <Button
+                                onClick={handlePayment}
                                 variant="primary"
                                 disabled={isPaying} // Deshabilitamos mientras carga
                             >
