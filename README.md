@@ -1,5 +1,5 @@
-# nutrite-alimenta-web-v1
-# Documentación del Proyecto: Tienda E-commerce MERN Stack
+# Versión 1.1 Nutrirte Alimenta Store
+# Documentación del Proyecto: Tienda tipo E-commerce MERN Stack
 
 Este documento detalla la arquitectura, características y configuración de la aplicación full-stack de e-commerce "Nutrite Alimenta".
 
