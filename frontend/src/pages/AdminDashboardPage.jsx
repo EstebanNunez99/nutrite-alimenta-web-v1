@@ -18,18 +18,13 @@ const AdminDashboardPage = () => {
                         </Link>
                     </li>
                     <li>
-                        <Link to="" className={styles.navItem}>
-                            <Button variant='primary'>Ver historial ventas</Button>
+                        <Link to="/admin/sales-history" className={styles.navItem}>
+                            <Button variant='primary'>Ver Historial de Ventas</Button>
                         </Link>
                     </li>
                     <li>
-                        <Link to="" className={styles.navItem}>
-                            <Button variant='primary'>Ver Compras en curso</Button>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="" className={styles.navItem}>
-                            <Button variant='primary'>Cambiar tarifa de envio</Button>
+                        <Link to="/admin/shipping-config" className={styles.navItem}>
+                            <Button variant='primary'>Configurar Envío</Button>
                         </Link>
                     </li>
                     <li>

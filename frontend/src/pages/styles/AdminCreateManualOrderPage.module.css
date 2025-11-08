@@ -1,0 +1,151 @@
+.container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 2rem;
+}
+
+.container h2 {
+    margin-bottom: 2rem;
+    color: #333;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.section {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #333;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 0.5rem;
+}
+
+.dropdown {
+    margin-top: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    background: #fff;
+}
+
+.dropdownItem {
+    padding: 0.75rem;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.dropdownItem:hover {
+    background: #f8f9fa;
+}
+
+.dropdownItem:last-child {
+    border-bottom: none;
+}
+
+.selected {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+    color: #155724;
+}
+
+.itemsList {
+    margin-top: 1.5rem;
+}
+
+.itemsList h4 {
+    margin-bottom: 1rem;
+    color: #555;
+}
+
+.itemRow {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+    align-items: center;
+}
+
+.itemInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.itemActions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.itemTotal {
+    text-align: right;
+    font-weight: bold;
+    color: #333;
+}
+
+.select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+}
+
+.summary {
+    margin-top: 1rem;
+}
+
+.summaryRow {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.summaryRow:last-child {
+    border-bottom: none;
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+    border-top: 2px solid #333;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+    .itemRow {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .itemActions {
+        justify-content: space-between;
+    }
+
+    .itemTotal {
+        text-align: left;
+    }
+}
+

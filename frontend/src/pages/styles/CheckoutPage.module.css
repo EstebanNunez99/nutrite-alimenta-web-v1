@@ -85,12 +85,21 @@
     margin: 1.5rem 0;
 }
 
+.summaryRow {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
 .summaryTotal {
     display: flex;
     justify-content: space-between;
     font-size: 1.2rem;
     font-weight: bold;
     color: #333;
+    margin-top: 1rem;
 }
 
 /* --- Estilos para Método de Pago --- */

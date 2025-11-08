@@ -45,3 +45,36 @@ export const createMercadoPagoPreference = async (orderId) => {
     const response = await api.post(`/orders/${orderId}/create-payment-preference`);
     return response.data;
 };
+
+/**
+ * Obtener todas las órdenes (Admin)
+ */
+export const getAllOrders = async (filters = {}) => {
+    const queryParams = new URLSearchParams();
+    if (filters.page) queryParams.append('page', filters.page);
+    if (filters.status) queryParams.append('status', filters.status);
+    if (filters.deliveryStatus) queryParams.append('deliveryStatus', filters.deliveryStatus);
+    if (filters.startDate) queryParams.append('startDate', filters.startDate);
+    if (filters.endDate) queryParams.append('endDate', filters.endDate);
+    if (filters.customerName) queryParams.append('customerName', filters.customerName);
+    if (filters.productName) queryParams.append('productName', filters.productName);
+
+    const res = await api.get(`/orders?${queryParams.toString()}`);
+    return res.data;
+};
+
+/**
+ * Actualizar estado de entrega de una orden (Admin)
+ */
+export const updateDeliveryStatus = async (orderId, deliveryStatus) => {
+    const res = await api.put(`/orders/${orderId}/delivery`, { deliveryStatus });
+    return res.data;
+};
+
+/**
+ * Crear orden manual (Admin)
+ */
+export const createManualOrder = async (orderData) => {
+    const res = await api.post('/orders/manual', orderData);
+    return res.data;
+};

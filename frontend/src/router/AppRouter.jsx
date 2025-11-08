@@ -16,6 +16,9 @@ const ProductsPage = React.lazy(() => import('../pages/ProductsPage'));
 const ProductDetailPage = React.lazy(() => import('../pages/ProductDetailPage'));
 const AdminDashboardPage = React.lazy(() => import('../pages/AdminDashboardPage'));
 const AdminProductsPage = React.lazy(() => import('../pages/AdminProductsPage'));
+const AdminSalesHistoryPage = React.lazy(() => import('../pages/AdminSalesHistoryPage'));
+const AdminShippingConfigPage = React.lazy(() => import('../pages/AdminShippingConfigPage'));
+const AdminCreateManualOrderPage = React.lazy(() => import('../pages/AdminCreateManualOrderPage'));
 const AdminUsersPage = React.lazy(() => import('../pages/AdminUsersPage'));
 const CreateProductPage = React.lazy(() => import('../pages/CreateProductPage'));
 const EditProductPage = React.lazy(() => import('../pages/EditProductPage'));
@@ -62,6 +65,9 @@ const AppRouter = () => {
                     <Route path="users" element={<AdminUsersPage />} />
                     <Route path="products/create" element={<CreateProductPage />} />
                     <Route path="products/edit/:id" element={<EditProductPage />} />
+                    <Route path="sales-history" element={<AdminSalesHistoryPage />} />
+                    <Route path="shipping-config" element={<AdminShippingConfigPage />} />
+                    <Route path="orders/manual" element={<AdminCreateManualOrderPage />} />
                 </Route>
             </Route>
             

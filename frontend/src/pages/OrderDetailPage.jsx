@@ -20,19 +20,55 @@ const OrderDetailPage = () => {
     const [isPaying, setIsPaying] = useState(false);
 
     useEffect(() => {
+        let interval = null;
+        
         const fetchOrder = async () => {
-            setLoading(true);
             try {
                 const data = await getOrderById(orderId);
                 setOrder(data);
+                setError('');
+                return data;
             } catch (err) {
                 setError('Orden no encontrada o no tienes permiso para verla.');
                 console.error("Error al cargar la orden:", err);
-            } finally {
-                setLoading(false);
+                return null;
             }
         };
-        fetchOrder();
+        
+        // Cargar orden inicial
+        const loadOrder = async () => {
+            setLoading(true);
+            const orderData = await fetchOrder();
+            setLoading(false);
+            
+            // Verificar si hay parámetros de retorno de MercadoPago
+            const urlParams = new URLSearchParams(window.location.search);
+            const paymentStatus = urlParams.get('status');
+            if (paymentStatus === 'approved' && orderData) {
+                toast.success('¡Pago aprobado! Procesando tu orden...');
+            } else if (paymentStatus === 'rejected' && orderData) {
+                toast.error('El pago fue rechazado. Por favor, intenta nuevamente.');
+            }
+            
+            // Polling para actualizar el estado de la orden cada 5 segundos si está pendiente
+            if (orderData && orderData.status === 'pendiente') {
+                interval = setInterval(async () => {
+                    const updatedOrder = await fetchOrder();
+                    if (updatedOrder && updatedOrder.status !== 'pendiente') {
+                        if (interval) clearInterval(interval);
+                        if (updatedOrder.status === 'completada') {
+                            toast.success('¡Pago confirmado! Tu orden ha sido procesada.');
+                        }
+                    }
+                }, 5000);
+            }
+        };
+        
+        loadOrder();
+        
+        return () => {
+            if (interval) clearInterval(interval);
+        };
     }, [orderId]);
 
     // --- CAMBIO: Lógica de pago real de MercadoPago ---
@@ -132,7 +168,23 @@ const OrderDetailPage = () => {
             <hr />
 
             <div style={{ textAlign: 'right', marginTop: '1.5rem', marginBottom: '2rem' }}>
-                <h3 style={{ margin: 0 }}>Total: {formattedTotal}</h3>
+                {order.subtotal && (
+                    <div style={{ marginBottom: '0.5rem', color: '#666' }}>
+                        <strong>Subtotal:</strong> {new Intl.NumberFormat("es-AR", {
+                            style: "currency",
+                            currency: "ARS",
+                        }).format(order.subtotal)}
+                    </div>
+                )}
+                {order.shippingCost !== undefined && order.shippingCost > 0 && (
+                    <div style={{ marginBottom: '0.5rem', color: '#666' }}>
+                        <strong>Envío:</strong> {new Intl.NumberFormat("es-AR", {
+                            style: "currency",
+                            currency: "ARS",
+                        }).format(order.shippingCost)}
+                    </div>
+                )}
+                <h3 style={{ margin: '0.5rem 0 0 0' }}>Total: {formattedTotal}</h3>
                 <p style={{ margin: '0.5rem 0', color: '#666' }}>
                     Método de pago: {order.paymentMethod || 'No especificado'}
                 </p>
@@ -159,19 +211,29 @@ const OrderDetailPage = () => {
                                 Comprobante N° : {order.paymentResult.id}
                             </p>
                         )}
-                        {/* Mantenemos tu lógica de envío */}
+                        {/* Estado de entrega */}
                         {order.deliveryStatus === 'entregado' ? (
-                            <p style={{ color: 'var(--color-exito, #28a745)', marginTop: '0.5rem' }}>
-                                ✓ Entregado el {order.deliveredAt ? new Date(order.deliveredAt).toLocaleDateString('es-AR') : 'N/A'}
+                            <p style={{ color: 'var(--color-exito, #28a745)', marginTop: '0.5rem', fontWeight: 'bold' }}>
+                                ✓ Entregado el {order.deliveredAt ? new Date(order.deliveredAt).toLocaleDateString('es-AR', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                }) : 'N/A'}
+                            </p>
+                        ) : order.deliveryStatus === 'enviado' ? (
+                            <p style={{ color: 'var(--color-advertencia, #ffc107)', marginTop: '0.5rem' }}>
+                                📦 En tránsito
                             </p>
                         ) : (
                             <p style={{ color: '#666', marginTop: '0.5rem' }}>
-                                En proceso de envío
+                                ⏳ Pendiente de envío
                             </p>
                         )}
                     </div>
 
-                    // ESTADO 2: CANCELADA (Expirada)
+                // ESTADO 2: CANCELADA (Expirada)
                 ) : order.status === 'cancelada' ? (
                     <div>
                         <p style={{ color: 'var(--color-peligro, #dc3545)', fontWeight: 'bold', marginBottom: '1rem' }}>
@@ -183,21 +245,34 @@ const OrderDetailPage = () => {
                         </p>
                     </div>
 
-                    // ESTADO 3: PENDIENTE (Lista para pagar)
+                // ESTADO 3: PENDIENTE (Lista para pagar)
                 ) : (
                     <div>
                         <p style={{ color: 'var(--color-advertencia, #ffc107)', fontWeight: 'bold', marginBottom: '1rem' }}>
                             ⚠ Pendiente de Pago
                         </p>
-                        {/* El botón de pago solo lo ve el dueño de la orden */}
+                        {/* El botón de pago solo lo ve el dueño de la orden y solo para MercadoPago */}
                         {usuario && (usuario._id === order.usuario?._id || usuario._id === order.usuario?.toString()) && (
-                            <Button
-                                onClick={handlePayment}
-                                variant="primary"
-                                disabled={isPaying} // Deshabilitamos mientras carga
-                            >
-                                {isPaying ? 'Generando...' : 'Pagar con MercadoPago'}
-                            </Button>
+                            <>
+                                {order.paymentMethod === 'MercadoPago' ? (
+                                    <Button
+                                        onClick={handlePayment}
+                                        variant="primary"
+                                        disabled={isPaying}
+                                    >
+                                        {isPaying ? 'Generando link de pago...' : 'Pagar con MercadoPago'}
+                                    </Button>
+                                ) : (
+                                    <div style={{ padding: '1rem', backgroundColor: '#fff3cd', borderRadius: '4px', border: '1px solid #ffc107' }}>
+                                        <p style={{ margin: 0, color: '#856404' }}>
+                                            <strong>Método de pago: {order.paymentMethod}</strong>
+                                        </p>
+                                        <p style={{ margin: '0.5rem 0 0 0', color: '#856404', fontSize: '0.9rem' }}>
+                                            Para este método de pago, contacta al vendedor para completar el pago.
+                                        </p>
+                                    </div>
+                                )}
+                            </>
                         )}
                     </div>
                 )}

@@ -16,11 +16,20 @@ export default async function handler(request, response) {
     try {
         console.log(`[Vercel Cron] Despertando al backend en: ${backendUrl}`);
 
-        // 2. Hacemos la llamada 'fetch' a tu backend en Render
+        // 2. Primero hacemos un health check
+        try {
+            const healthCheckUrl = backendUrl.replace(/\/api\/orders\/trigger-cron$/, '/health');
+            const healthResponse = await fetch(healthCheckUrl);
+            console.log(`[Vercel Cron] Health check: ${healthResponse.status}`);
+        } catch (healthError) {
+            console.warn('[Vercel Cron] Health check falló, continuando con cron...');
+        }
+
+        // 3. Hacemos la llamada 'fetch' a tu backend en Render para el cron
         const backendResponse = await fetch(backendUrl, {
             method: 'GET',
             headers: {
-                // 3. ¡Agregamos el header de seguridad!
+                // 4. ¡Agregamos el header de seguridad!
                 // Esto prueba a Render que la llamada es legítima.
                 'x-cron-secret': cronSecret,
             },

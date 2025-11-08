@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../hooks/useCart.js';
 import { toast } from 'react-toastify';
@@ -6,7 +6,8 @@ import Button from '../components/ui/Button.jsx';
 import Input from '../components/ui/Input';
 import Spinner from '../components/ui/Spinner';
 import styles from './styles/CheckoutPage.module.css';
-import useDocumentTitle from '../hooks/useDocumentTitle'
+import useDocumentTitle from '../hooks/useDocumentTitle';
+import { calculateShippingCost } from '../services/shippingService.js';
 
 
 const CheckoutPage = () => {
@@ -24,10 +25,60 @@ const CheckoutPage = () => {
 
     const [paymentMethod, setPaymentMethod] = useState('MercadoPago');
     const [isProcessing, setIsProcessing] = useState(false);
+    const [shippingCost, setShippingCost] = useState(0);
+    const [shippingDistance, setShippingDistance] = useState(0);
+    const [isCalculatingShipping, setIsCalculatingShipping] = useState(false);
+    const [shippingMessage, setShippingMessage] = useState('');
 
     const onChange = (e) => {
-        setShippingAddress({ ...shippingAddress, [e.target.name]: e.target.value });
+        setShippingAddress(prev => ({ ...prev, [e.target.name]: e.target.value }));
     };
+
+    const calculateShipping = useCallback(async (address) => {
+        if (!address.address || !address.city || !address.postalCode) {
+            return;
+        }
+        
+        setIsCalculatingShipping(true);
+        try {
+            const cartTotal = cart.items.reduce((total, item) => total + item.cantidad * item.precio, 0);
+            const result = await calculateShippingCost(address, cartTotal);
+            
+            if (result.freeShipping) {
+                setShippingCost(0);
+                setShippingDistance(result.distance || 0);
+                setShippingMessage(result.message || 'Envío gratuito');
+            } else {
+                setShippingCost(result.cost || 0);
+                setShippingDistance(result.distance || 0);
+                setShippingMessage(result.estimated ? 'Costo estimado' : '');
+            }
+        } catch (error) {
+            console.error('Error al calcular envío:', error);
+            if (error.response?.status === 400) {
+                toast.error(error.response.data.msg || 'La dirección está fuera del área de cobertura');
+                setShippingCost(0);
+                setShippingMessage('');
+            } else {
+                // Si hay error, usar costo mínimo como fallback
+                setShippingCost(500);
+                setShippingMessage('No se pudo calcular. Se aplicará costo mínimo.');
+            }
+        } finally {
+            setIsCalculatingShipping(false);
+        }
+    }, [cart.items]);
+
+    // Recalcular envío cuando cambian los items del carrito o la dirección
+    useEffect(() => {
+        if (shippingAddress.address && shippingAddress.city && shippingAddress.postalCode) {
+            const timer = setTimeout(() => {
+                calculateShipping(shippingAddress);
+            }, 500); // Debounce
+            
+            return () => clearTimeout(timer);
+        }
+    }, [cart.items, shippingAddress, calculateShipping]);
 
     const handlePaymentMethodChange = (e) => {
         setPaymentMethod(e.target.value);
@@ -40,14 +91,14 @@ const CheckoutPage = () => {
         try {
             const orderData = {
                 shippingAddress,
-                paymentMethod: paymentMethod
+                paymentMethod: paymentMethod,
+                shippingCost: shippingCost
             };
             
             const createdOrder = await checkout(orderData);
             toast.success('¡Orden creada con éxito!');
             
-            // Si es MercadoPago, aquí en el futuro redirigiríamos a la URL de pago
-            // Por ahora, redirigimos directamente a la página de la orden
+            // Si es MercadoPago, redirigir a la página de la orden donde se genera el link de pago
             navigate(`/orden/${createdOrder._id}`);
         } catch (error) {
             console.error('Error al crear la orden:', error);
@@ -73,12 +124,23 @@ const CheckoutPage = () => {
     }
 
     // Si llegamos aquí, estamos 100% seguros de que 'cart' es un objeto y tiene items.
-    const cartTotal = cart.items.reduce((total, item) => total + item.cantidad * item.precio, 0);
+    const cartSubtotal = cart.items.reduce((total, item) => total + item.cantidad * item.precio, 0);
+    const total = cartSubtotal + shippingCost;
+
+    const formattedSubtotal = new Intl.NumberFormat("es-AR", {
+        style: "currency",
+        currency: "ARS",
+    }).format(cartSubtotal);
+
+    const formattedShipping = new Intl.NumberFormat("es-AR", {
+        style: "currency",
+        currency: "ARS",
+    }).format(shippingCost);
 
     const formattedTotal = new Intl.NumberFormat("es-AR", {
         style: "currency",
         currency: "ARS",
-    }).format(cartTotal);
+    }).format(total);
 
     return (
         <div className={styles.pageContainer}>
@@ -123,7 +185,17 @@ const CheckoutPage = () => {
                             required 
                             placeholder="País"
                         />
-                        <p className={styles.aviso}>Aclaración: aún no está conectada a la API de google maps, por lo que no se realiza el calculo de costo de envio automático</p>
+                        {isCalculatingShipping && (
+                            <p className={styles.aviso} style={{ color: '#007bff' }}>
+                                Calculando costo de envío...
+                            </p>
+                        )}
+                        {shippingMessage && !isCalculatingShipping && (
+                            <p className={styles.aviso} style={{ color: shippingCost === 0 ? '#28a745' : '#666' }}>
+                                {shippingMessage}
+                                {shippingDistance > 0 && ` (Distancia: ${shippingDistance} km)`}
+                            </p>
+                        )}
                         
                         <div className={styles.paymentMethodSection}>
                             <label htmlFor="paymentMethod" className={styles.selectLabel}>
@@ -186,6 +258,17 @@ const CheckoutPage = () => {
                                 </span>
                             </div>
                         ))}
+                    </div>
+                    <hr className={styles.summaryDivider} />
+                    <div className={styles.summaryRow}>
+                        <span>Subtotal:</span>
+                        <span>{formattedSubtotal}</span>
+                    </div>
+                    <div className={styles.summaryRow}>
+                        <span>Envío:</span>
+                        <span>
+                            {isCalculatingShipping ? 'Calculando...' : formattedShipping}
+                        </span>
                     </div>
                     <hr className={styles.summaryDivider} />
                     <div className={styles.summaryTotal}>
