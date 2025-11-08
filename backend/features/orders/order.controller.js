@@ -15,7 +15,7 @@ export const createOrder = async (req, res) => {
     session.startTransaction();
 
     try {
-        const { shippingAddress, paymentMethod } = req.body;
+        const { shippingAddress, paymentMethod, shippingCost } = req.body;
         const usuarioId = req.usuario.id;
 
         const cart = await Cart.findOne({ usuario: usuarioId }).populate('items.producto').session(session);
@@ -26,7 +26,7 @@ export const createOrder = async (req, res) => {
         }
 
         const productsToUpdate = [];
-        let calculatedTotalPrice = 0;
+        let calculatedSubtotal = 0;
 
         for (const item of cart.items) {
             const product = item.producto;
@@ -36,7 +36,7 @@ export const createOrder = async (req, res) => {
                 throw new Error(`Stock insuficiente para ${product.nombre}. Solo quedan ${stockDisponible} unidades disponibles.`);
             }
 
-            calculatedTotalPrice += item.cantidad * item.precio;
+            calculatedSubtotal += item.cantidad * item.precio;
 
             productsToUpdate.push({
                 updateOne: {
@@ -59,12 +59,17 @@ export const createOrder = async (req, res) => {
             producto: item.producto._id
         }));
 
+        const finalShippingCost = shippingCost || 0;
+        const totalPrice = calculatedSubtotal + finalShippingCost;
+
         const order = new Order({
             usuario: usuarioId,
             items: items, 
             shippingAddress,
             paymentMethod,
-            totalPrice: calculatedTotalPrice,
+            subtotal: calculatedSubtotal,
+            shippingCost: finalShippingCost,
+            totalPrice: totalPrice,
             status: 'pendiente', 
         });
 
@@ -222,6 +227,18 @@ export const createMercadoPagoPreference = async (req, res) => {
             picture_url: item.imagen,
             description: item.nombre, 
         }));
+
+        // Agregar costo de envío como item adicional si existe
+        if (order.shippingCost > 0) {
+            items.push({
+                id: 'shipping',
+                title: 'Costo de Envío',
+                quantity: 1,
+                unit_price: order.shippingCost,
+                currency_id: 'ARS',
+                description: 'Costo de envío'
+            });
+        }
 
         const preferenceBody = {
             items: items,
@@ -393,6 +410,193 @@ export const receiveMercadoPagoWebhook = async (req, res) => {
     }
 };
 
+
+// @desc    Obtener todas las órdenes (Admin)
+// @route   GET /api/orders
+// @access  Private/Admin
+export const getAllOrders = async (req, res) => {
+    try {
+        const pageSize = 20;
+        const page = Number(req.query.page) || 1;
+        
+        // Filtros
+        const filters = {};
+        if (req.query.status) filters.status = req.query.status;
+        if (req.query.deliveryStatus) filters.deliveryStatus = req.query.deliveryStatus;
+        if (req.query.startDate || req.query.endDate) {
+            filters.createdAt = {};
+            if (req.query.startDate) filters.createdAt.$gte = new Date(req.query.startDate);
+            if (req.query.endDate) filters.createdAt.$lte = new Date(req.query.endDate);
+        }
+
+        // Búsqueda por nombre de cliente
+        if (req.query.customerName) {
+            filters['usuario'] = await mongoose.model('User').findOne({
+                nombre: { $regex: req.query.customerName, $options: 'i' }
+            }).select('_id');
+            if (filters['usuario']) {
+                filters['usuario'] = filters['usuario']._id;
+            } else {
+                // Si no se encuentra el usuario, devolver array vacío
+                return res.json({ orders: [], page, totalPages: 0, total: 0 });
+            }
+        }
+
+        // Búsqueda por producto
+        if (req.query.productName) {
+            filters['items.nombre'] = { $regex: req.query.productName, $options: 'i' };
+        }
+
+        const count = await Order.countDocuments(filters);
+        const orders = await Order.find(filters)
+            .populate('usuario', 'nombre email')
+            .sort({ createdAt: -1 })
+            .limit(pageSize)
+            .skip(pageSize * (page - 1));
+
+        res.json({
+            orders,
+            page,
+            totalPages: Math.ceil(count / pageSize),
+            total: count
+        });
+    } catch (error) {
+        console.error('Error en getAllOrders:', error);
+        res.status(500).json({ msg: 'Error en el servidor', error: error.message });
+    }
+};
+
+// @desc    Actualizar estado de entrega de una orden (Admin)
+// @route   PUT /api/orders/:id/delivery
+// @access  Private/Admin
+export const updateDeliveryStatus = async (req, res) => {
+    try {
+        const { deliveryStatus } = req.body;
+        const order = await Order.findById(req.params.id);
+
+        if (!order) {
+            return res.status(404).json({ msg: 'Orden no encontrada.' });
+        }
+
+        if (!['no_enviado', 'enviado', 'entregado'].includes(deliveryStatus)) {
+            return res.status(400).json({ msg: 'Estado de entrega inválido.' });
+        }
+
+        order.deliveryStatus = deliveryStatus;
+        if (deliveryStatus === 'entregado') {
+            order.deliveredAt = new Date();
+        }
+
+        await order.save();
+        res.json(order);
+    } catch (error) {
+        console.error('Error al actualizar estado de entrega:', error);
+        res.status(500).json({ msg: 'Error en el servidor', error: error.message });
+    }
+};
+
+// @desc    Crear orden manual (Admin)
+// @route   POST /api/orders/manual
+// @access  Private/Admin
+export const createManualOrder = async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+        const { usuarioId, items, shippingAddress, paymentMethod, shippingCost, status, deliveryStatus } = req.body;
+
+        if (!usuarioId || !items || items.length === 0) {
+            await session.abortTransaction();
+            return res.status(400).json({ msg: 'Usuario y items son requeridos.' });
+        }
+
+        // Verificar que el usuario existe
+        const User = mongoose.model('User');
+        const user = await User.findById(usuarioId).session(session);
+        if (!user) {
+            await session.abortTransaction();
+            return res.status(404).json({ msg: 'Usuario no encontrado.' });
+        }
+
+        const productsToUpdate = [];
+        let calculatedSubtotal = 0;
+
+        for (const item of items) {
+            const product = await Product.findById(item.producto).session(session);
+            if (!product) {
+                throw new Error(`Producto ${item.producto} no encontrado.`);
+            }
+
+            const stockDisponible = product.stock - product.stockComprometido;
+            if (stockDisponible < item.cantidad) {
+                throw new Error(`Stock insuficiente para ${product.nombre}. Solo quedan ${stockDisponible} unidades disponibles.`);
+            }
+
+            calculatedSubtotal += item.cantidad * item.precio;
+
+            productsToUpdate.push({
+                updateOne: {
+                    filter: { _id: product._id },
+                    update: {
+                        $inc: {
+                            stock: -item.cantidad,
+                            stockComprometido: item.cantidad
+                        }
+                    }
+                }
+            });
+        }
+
+        const finalShippingCost = shippingCost || 0;
+        const totalPrice = calculatedSubtotal + finalShippingCost;
+
+        const order = new Order({
+            usuario: usuarioId,
+            items: items.map(item => ({
+                nombre: item.nombre,
+                cantidad: item.cantidad,
+                imagen: item.imagen || '/images/sample.jpg',
+                precio: item.precio,
+                producto: item.producto
+            })),
+            shippingAddress: shippingAddress || {},
+            paymentMethod: paymentMethod || 'Efectivo',
+            subtotal: calculatedSubtotal,
+            shippingCost: finalShippingCost,
+            totalPrice: totalPrice,
+            status: status || 'completada',
+            deliveryStatus: deliveryStatus || 'no_enviado'
+        });
+
+        if (status === 'completada') {
+            order.paidAt = new Date();
+            // Liberar stock comprometido ya que está pagada
+            const productsToRelease = items.map(item => ({
+                updateOne: {
+                    filter: { _id: item.producto },
+                    update: {
+                        $inc: { stockComprometido: -item.cantidad }
+                    }
+                }
+            }));
+            await Product.bulkWrite(productsToRelease, { session });
+        }
+
+        await Product.bulkWrite(productsToUpdate, { session });
+        const createdOrder = await order.save({ session });
+        await session.commitTransaction();
+
+        const populatedOrder = await Order.findById(createdOrder._id).populate('usuario', 'nombre email');
+        res.status(201).json(populatedOrder);
+
+    } catch (error) {
+        await session.abortTransaction();
+        console.error(error);
+        res.status(500).json({ msg: 'Error en el servidor', error: error.message });
+    } finally {
+        session.endSession();
+    }
+};
 
 // @desc    Disparador manual para limpiar órdenes expiradas (para Cron Job)
 // @route   GET /api/orders/trigger-cron

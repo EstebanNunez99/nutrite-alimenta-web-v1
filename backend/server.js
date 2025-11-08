@@ -16,6 +16,7 @@ import userRoutes from './features/users/user.routes.js';
 import productRoutes from './features/products/product.routes.js'
 import cartRoutes from './features/cart/cart.routes.js'; 
 import orderRoutes from './features/orders/order.routes.js';
+import shippingRoutes from './features/shipping/shipping.routes.js';
 
 // 1. Cargar Variables de Entorno
 dotenv.config();
@@ -58,16 +59,24 @@ app.use(express.json({ extended: true })); // Para poder leer JSON en el body
 // 5. Definir el Puerto
 const PORT = process.env.PORT || 4000;
 
-// 6. Cargar Módulos de Rutas
+// 6. Health Check Endpoint (para evitar que servicios se duerman)
+app.get('/health', (req, res) => {
+    res.status(200).json({ 
+        status: 'ok', 
+        timestamp: new Date().toISOString(),
+        service: 'backend'
+    });
+});
+
+// 7. Cargar Módulos de Rutas
 console.log('Cargando ruta de usuarios en /api/users');
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
-app.use('/api/cart', cartRoutes)
-app.use('/api/orders', orderRoutes); 
+app.use('/api/cart', cartRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/shipping', shippingRoutes); 
 
-
-
-// 7. Iniciar el Servidor
+// 8. Iniciar el Servidor
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`El servidor está funcionando en el puerto ${PORT}`);
 });
