@@ -11,7 +11,7 @@ const AdminHomePage = () => {
 
     return (
         <div className={styles.dashboard}>
-            <p className={styles.aviso}>Aclaración: Todos los datos, imagenes e informacion que se encuentra en este sitio web son puramente de un entorno de desarrollo y pruebas </p>
+            <p className={styles.aviso}>Aclaración: Todos los datos, imagenes e informacion que se encuentra en este sitio web son puramente de un entorno de desarrollo y pruebas. Excepto los links de redes y canales de contacto</p>
             
             <div className={styles.welcome}>
                 <h2>Bienvenido administrador: {usuario.nombre}.</h2>

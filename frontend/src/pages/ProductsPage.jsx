@@ -63,7 +63,7 @@ const ProductsPage = () => {
     return (
         
         <div className={styles.pageContainer}>
-            <p className={styles.aviso}>Aclaración: Todos los datos, imagenes e informacion que se encuentra en este sitio web. Son puramente de un entorno de desarrollo y pruebas </p>
+            <p className={styles.aviso}>Aclaración: Todos los datos, imagenes e informacion que se encuentra en este sitio web. Son puramente de un entorno de desarrollo y pruebas Excepto los links de redes y canales de contacto </p>
 
             <header className={styles.pageHeader}>
                 <h1>Nuestro Catálogo</h1>
