@@ -18,21 +18,25 @@ const AdminDashboardPage = () => {
                         </Link>
                     </li>
                     <li>
-                        <Link to="/admin/users" className={styles.navItem}>
-                            <Button variant='primary'>Gestionar Usuarios</Button>
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/admin/users" className={styles.navItem}>
+                        <Link to="" className={styles.navItem}>
                             <Button variant='primary'>Ver historial ventas</Button>
                         </Link>
                     </li>
                     <li>
-                        <Link to="/admin/users" className={styles.navItem}>
+                        <Link to="" className={styles.navItem}>
                             <Button variant='primary'>Ver Compras en curso</Button>
                         </Link>
                     </li>
-                    {/* Aquí podrías añadir enlaces a "Gestionar Órdenes", etc. en el futuro */}
+                    <li>
+                        <Link to="" className={styles.navItem}>
+                            <Button variant='primary'>Cambiar tarifa de envio</Button>
+                        </Link>
+                    </li>
+                    <li>
+                        <Link to="/admin/users" className={styles.navItem}>
+                            <Button variant='primary'>Gestionar Usuarios</Button>
+                        </Link>
+                    </li>
                 </ul>
             </nav>
         </div>
