@@ -19,7 +19,7 @@ const CheckoutPage = () => {
     const [shippingAddress, setShippingAddress] = useState({
         address: '',
         city: '',
-        postalCode: '',
+        postalCode: '3500',
         country: 'Argentina' // Valor por defecto
     });
 
@@ -165,25 +165,7 @@ const CheckoutPage = () => {
                             value={shippingAddress.city}
                             onChange={onChange} 
                             required 
-                            placeholder="Ciudad"
-                        />
-                        <Input 
-                            label="Código Postal" 
-                            type="text" 
-                            name="postalCode" 
-                            value={shippingAddress.postalCode}
-                            onChange={onChange} 
-                            required 
-                            placeholder="CP"
-                        />
-                        <Input 
-                            label="País" 
-                            type="text" 
-                            name="country" 
-                            value={shippingAddress.country}
-                            onChange={onChange} 
-                            required 
-                            placeholder="País"
+                            placeholder="Resistencia, Barranqueras, Pto Vilelas"
                         />
                         {isCalculatingShipping && (
                             <p className={styles.aviso} style={{ color: '#007bff' }}>
